@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Tambah' if mode == 'tambah' else 'Ubah' }} Kunjungan{% endblock %}
+
+{% block content %}
+<h4 class="mb-3">
+    <i class="bi bi-clipboard2-pulse-fill"></i>
+    {{ 'Tambah Data Kunjungan' if mode == 'tambah' else 'Ubah Data Kunjungan' }}
+</h4>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form method="POST" novalidate>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Santri <span class="text-danger">*</span></label>
+                    <select name="santri_id" class="form-select" required>
+                        <option value="">Pilih santri</option>
+                        {% for s in daftar_santri %}
+                        {% set selected_id = kunjungan.santri_id|string if kunjungan and kunjungan is mapping else (kunjungan.santri_id|string if kunjungan else '') %}
+                        <option value="{{ s.id }}" {% if selected_id == s.id|string %}selected{% endif %}>
+                            {{ s.nama }} ({{ s.nis }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Tanggal <span class="text-danger">*</span></label>
+                    <input type="date" name="tanggal" class="form-control" required
+                           value="{{ kunjungan.tanggal if kunjungan and kunjungan is mapping else (kunjungan.tanggal.isoformat() if kunjungan and kunjungan.tanggal else '') }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Status <span class="text-danger">*</span></label>
+                    <select name="status" class="form-select" required>
+                        <option value="">Pilih status</option>
+                        {% for st in status_list %}
+                        <option value="{{ st }}" {% if kunjungan and (kunjungan.status if kunjungan is mapping else kunjungan.status) == st %}selected{% endif %}>{{ st }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Keluhan <span class="text-danger">*</span></label>
+                    <input type="text" name="keluhan" class="form-control" placeholder="Contoh: Demam, Diare, Sakit Kepala"
+                           value="{{ kunjungan.keluhan if kunjungan else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Diagnosa</label>
+                    <input type="text" name="diagnosa" class="form-control"
+                           value="{{ kunjungan.diagnosa if kunjungan else '' }}">
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Tindakan/Penanganan</label>
+                    <textarea name="tindakan" class="form-control" rows="2">{{ kunjungan.tindakan if kunjungan else '' }}</textarea>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Petugas Pemeriksa <span class="text-danger">*</span></label>
+                    <input type="text" name="petugas" class="form-control"
+                           value="{{ kunjungan.petugas if kunjungan else session.get('admin_nama', '') }}" required>
+                </div>
+
+                {% if mode == 'tambah' %}
+                <div class="col-md-3">
+                    <label class="form-label">Obat Diberikan</label>
+                    <select name="obat_id" class="form-select">
+                        <option value="">Tanpa obat</option>
+                        {% for o in daftar_obat %}
+                        <option value="{{ o.id }}">{{ o.nama_obat }} (stok: {{ o.stok }} {{ o.satuan }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Jumlah Obat</label>
+                    <input type="number" min="1" name="jumlah_obat" class="form-control" placeholder="Jika memilih obat">
+                </div>
+                {% elif kunjungan and kunjungan.obat %}
+                <div class="col-md-6">
+                    <label class="form-label">Obat yang Diberikan</label>
+                    <input type="text" class="form-control" disabled
+                           value="{{ kunjungan.obat.nama_obat }} ({{ kunjungan.jumlah_obat }} {{ kunjungan.obat.satuan }})">
+                    <div class="form-text">Data obat pada kunjungan yang sudah tersimpan tidak dapat diubah dari sini
+                        untuk menjaga konsistensi stok. Hapus dan buat ulang kunjungan bila perlu perubahan.</div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-success"><i class="bi bi-save-fill"></i> Simpan</button>
+                <a href="{{ url_for('admin.kunjungan_list') }}" class="btn btn-outline-secondary">Batal</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+config
