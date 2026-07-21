@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Beranda - Pos Kesehatan Pesantren{% endblock %}
+
+{% block content %}
+<div class="p-5 mb-4 bg-success bg-gradient text-white rounded-4 shadow-sm">
+    <h1 class="display-6 fw-bold"><i class="bi bi-heart-pulse-fill"></i> Pos Kesehatan {{ nama_pesantren }}</h1>
+    <p class="lead mb-0">Melayani pemeriksaan kesehatan dasar, pencatatan riwayat kesehatan, dan pengelolaan
+        logistik obat bagi seluruh santri secara tertib dan terpantau.</p>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm h-100 border-0">
+            <div class="card-body">
+                <i class="bi bi-people-fill text-success fs-1"></i>
+                <h3 class="mt-2">{{ total_santri }}</h3>
+                <p class="text-muted mb-0">Santri Terdaftar</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm h-100 border-0">
+            <div class="card-body">
+                <i class="bi bi-clipboard2-pulse-fill text-success fs-1"></i>
+                <h3 class="mt-2">{{ total_kunjungan_bulan_ini }}</h3>
+                <p class="text-muted mb-0">Kunjungan Bulan Ini</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm h-100 border-0">
+            <div class="card-body">
+                <i class="bi bi-capsule text-success fs-1"></i>
+                <h3 class="mt-2">{{ total_jenis_obat }}</h3>
+                <p class="text-muted mb-0">Jenis Obat Tersedia</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-info-circle-fill text-success"></i> Layanan Kami</h5>
+                <ul class="mb-0">
+                    <li>Pemeriksaan kesehatan dasar santri</li>
+                    <li>Pencatatan riwayat kunjungan & keluhan kesehatan</li>
+                    <li>Pemberian obat sesuai kebutuhan</li>
+                    <li>Rujukan ke Puskesmas/Rumah Sakit bila diperlukan</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-clock-fill text-success"></i> Jam Operasional</h5>
+                <p class="mb-1">Senin &ndash; Sabtu: 07.00 &ndash; 21.00 WIB</p>
+                <p class="mb-1">Minggu &amp; Hari Besar: Layanan darurat (on-call)</p>
+                <hr>
+                <p class="mb-0 text-muted small">Untuk kondisi darurat, segera hubungi petugas pos kesehatan
+                    atau pengurus asrama terdekat.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

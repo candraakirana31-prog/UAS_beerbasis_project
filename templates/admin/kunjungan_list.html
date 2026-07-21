@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Data Kunjungan{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-clipboard2-pulse-fill"></i> Data Kunjungan Kesehatan</h4>
+    <a href="{{ url_for('admin.kunjungan_tambah') }}" class="btn btn-success">
+        <i class="bi bi-plus-lg"></i> Tambah Kunjungan
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-success">
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Santri</th>
+                    <th>Keluhan</th>
+                    <th>Diagnosa</th>
+                    <th>Obat Diberikan</th>
+                    <th>Status</th>
+                    <th>Petugas</th>
+                    <th class="text-end">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for k in data_kunjungan %}
+                <tr>
+                    <td>{{ k.tanggal.strftime('%d-%m-%Y') }}</td>
+                    <td>{{ k.santri.nama }} <span class="text-muted small">({{ k.santri.nis }})</span></td>
+                    <td>{{ k.keluhan }}</td>
+                    <td>{{ k.diagnosa or '-' }}</td>
+                    <td>
+                        {% if k.obat %}
+                            {{ k.obat.nama_obat }} ({{ k.jumlah_obat }} {{ k.obat.satuan }})
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if k.status == 'Rawat Jalan' %}
+                        <span class="badge bg-success">{{ k.status }}</span>
+                        {% elif 'Rujuk' in k.status %}
+                        <span class="badge bg-danger">{{ k.status }}</span>
+                        {% else %}
+                        <span class="badge bg-warning text-dark">{{ k.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ k.petugas }}</td>
+                    <td class="text-end">
+                        <a href="{{ url_for('admin.kunjungan_ubah', kunjungan_id=k.id) }}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <form action="{{ url_for('admin.kunjungan_hapus', kunjungan_id=k.id) }}" method="POST" class="d-inline"
+                              onsubmit="return confirm('Yakin ingin menghapus data kunjungan ini?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash-fill"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="8" class="text-center text-muted py-3">Belum ada data kunjungan.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Data Santri{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-people-fill"></i> Data Santri</h4>
+    <a href="{{ url_for('admin.santri_tambah') }}" class="btn btn-success">
+        <i class="bi bi-plus-lg"></i> Tambah Santri
+    </a>
+</div>
+
+<form class="row g-2 mb-3" method="GET">
+    <div class="col-md-4">
+        <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Cari nama atau NIS...">
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-success"><i class="bi bi-search"></i> Cari</button>
+    </div>
+</form>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-success">
+                <tr>
+                    <th>NIS</th>
+                    <th>Nama</th>
+                    <th>JK</th>
+                    <th>Asrama</th>
+                    <th>Umur</th>
+                    <th>Total Kunjungan</th>
+                    <th class="text-end">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in data_santri %}
+                <tr>
+                    <td>{{ s.nis }}</td>
+                    <td>{{ s.nama }}</td>
+                    <td>{{ s.jenis_kelamin }}</td>
+                    <td>{{ s.asrama }}</td>
+                    <td>{{ s.umur if s.umur is not none else '-' }}</td>
+                    <td><span class="badge bg-secondary">{{ s.total_kunjungan }}</span></td>
+                    <td class="text-end">
+                        <a href="{{ url_for('admin.santri_ubah', santri_id=s.id) }}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <form action="{{ url_for('admin.santri_hapus', santri_id=s.id) }}" method="POST" class="d-inline"
+                              onsubmit="return confirm('Yakin ingin menghapus data santri {{ s.nama }}? Seluruh riwayat kunjungannya juga akan terhapus.');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash-fill"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7" class="text-center text-muted py-3">Belum ada data santri.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
