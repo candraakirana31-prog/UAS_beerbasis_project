@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block content %}
+<h3 class="mb-4"><i class="bi bi-speedometer2"></i> Dashboard Admin</h3>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6">
+        <div class="card border-0 shadow-sm text-bg-success h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small">Total Santri</div>
+                        <div class="fs-3 fw-bold">{{ total_santri }}</div>
+                    </div>
+                    <i class="bi bi-people-fill fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card border-0 shadow-sm text-bg-primary h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small">Total Kunjungan</div>
+                        <div class="fs-3 fw-bold">{{ total_kunjungan }}</div>
+                    </div>
+                    <i class="bi bi-clipboard2-pulse-fill fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card border-0 shadow-sm text-bg-info h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small">Kunjungan Bulan Ini</div>
+                        <div class="fs-3 fw-bold">{{ total_kunjungan_bulan_ini }}</div>
+                    </div>
+                    <i class="bi bi-calendar2-week-fill fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card border-0 shadow-sm text-bg-warning h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small">Obat Stok Menipis</div>
+                        <div class="fs-3 fw-bold">{{ obat_menipis }}</div>
+                    </div>
+                    <i class="bi bi-exclamation-triangle-fill fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-7">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="card-title">Tren Kunjungan 6 Bulan Terakhir</h6>
+                <canvas id="chartBulan" height="140"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="card-title">5 Keluhan Terbanyak</h6>
+                {% if chart_keluhan_labels %}
+                <canvas id="chartKeluhan" height="140"></canvas>
+                {% else %}
+                <p class="text-muted small mb-0">Belum ada data kunjungan.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-exclamation-triangle-fill text-warning"></i> Obat Perlu Restock</h6>
+                {% if obat_stok_rendah %}
+                <ul class="list-group list-group-flush">
+                    {% for o in obat_stok_rendah %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        {{ o.nama_obat }}
+                        <span class="badge bg-danger rounded-pill">Sisa {{ o.stok }} {{ o.satuan }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted small mb-0">Semua stok obat masih aman.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-clock-history text-primary"></i> Kunjungan Terbaru</h6>
+                {% if kunjungan_terbaru %}
+                <ul class="list-group list-group-flush">
+                    {% for k in kunjungan_terbaru %}
+                    <li class="list-group-item px-0">
+                        <div class="d-flex justify-content-between">
+                            <strong>{{ k.santri.nama }}</strong>
+                            <span class="text-muted small">{{ k.tanggal.strftime('%d-%m-%Y') }}</span>
+                        </div>
+                        <div class="small text-muted">{{ k.keluhan }} &mdash; {{ k.status }}</div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted small mb-0">Belum ada data kunjungan.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const ctxBulan = document.getElementById('chartBulan');
+    new Chart(ctxBulan, {
+        type: 'line',
+        data: {
+            labels: {{ chart_bulan_labels | tojson }},
+            datasets: [{
+                label: 'Jumlah Kunjungan',
+                data: {{ chart_bulan_data | tojson }},
+                borderColor: '#198754',
+                backgroundColor: 'rgba(25,135,84,0.15)',
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: { scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+    });
+
+    {% if chart_keluhan_labels %}
+    const ctxKeluhan = document.getElementById('chartKeluhan');
+    new Chart(ctxKeluhan, {
+        type: 'bar',
+        data: {
+            labels: {{ chart_keluhan_labels | tojson }},
+            datasets: [{
+                label: 'Jumlah Kasus',
+                data: {{ chart_keluhan_data | tojson }},
+                backgroundColor: '#20c997'
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } },
+            plugins: { legend: { display: false } }
+        }
+    });
+    {% endif %}
+</script>
+{% endblock %}
