@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Tambah' if mode == 'tambah' else 'Ubah' }} Obat{% endblock %}
+
+{% block content %}
+<h4 class="mb-3">
+    <i class="bi bi-capsule"></i>
+    {{ 'Tambah Data Obat' if mode == 'tambah' else 'Ubah Data Obat' }}
+</h4>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form method="POST" novalidate>
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <label class="form-label">Nama Obat <span class="text-danger">*</span></label>
+                    <input type="text" name="nama_obat" class="form-control"
+                           value="{{ obat.nama_obat if obat else '' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Satuan <span class="text-danger">*</span></label>
+                    <input type="text" name="satuan" class="form-control" placeholder="tablet, botol, sachet..."
+                           value="{{ obat.satuan if obat else '' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Stok <span class="text-danger">*</span></label>
+                    <input type="number" min="0" name="stok" class="form-control"
+                           value="{{ obat.stok if obat else 0 }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Stok Minimum</label>
+                    <input type="number" min="0" name="stok_minimum" class="form-control"
+                           value="{{ obat.stok_minimum if obat else 10 }}">
+                    <div class="form-text">Jika stok sama atau di bawah nilai ini, sistem menandai "Stok Menipis".</div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Keterangan</label>
+                    <input type="text" name="keterangan" class="form-control"
+                           value="{{ obat.keterangan if obat else '' }}">
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-success"><i class="bi bi-save-fill"></i> Simpan</button>
+                <a href="{{ url_for('admin.obat_list') }}" class="btn btn-outline-secondary">Batal</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
