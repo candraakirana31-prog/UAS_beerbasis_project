@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Tambah' if mode == 'tambah' else 'Ubah' }} Santri{% endblock %}
+
+{% block content %}
+<h4 class="mb-3">
+    <i class="bi bi-person-plus-fill"></i>
+    {{ 'Tambah Data Santri' if mode == 'tambah' else 'Ubah Data Santri' }}
+</h4>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form method="POST" novalidate>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">NIS <span class="text-danger">*</span></label>
+                    <input type="text" name="nis" class="form-control"
+                           value="{{ santri.nis if santri else '' }}" required>
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
+                    <input type="text" name="nama" class="form-control"
+                           value="{{ santri.nama if santri else '' }}" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Jenis Kelamin <span class="text-danger">*</span></label>
+                    <select name="jenis_kelamin" class="form-select" required>
+                        <option value="">Pilih</option>
+                        <option value="L" {% if santri and santri.jenis_kelamin == 'L' %}selected{% endif %}>Laki-laki</option>
+                        <option value="P" {% if santri and santri.jenis_kelamin == 'P' %}selected{% endif %}>Perempuan</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label">Asrama <span class="text-danger">*</span></label>
+                    <input type="text" name="asrama" class="form-control"
+                           value="{{ santri.asrama if santri else '' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tanggal Lahir</label>
+                    <input type="date" name="tanggal_lahir" class="form-control"
+                           value="{{ santri.tanggal_lahir if santri and santri is mapping else (santri.tanggal_lahir.isoformat() if santri and santri.tanggal_lahir else '') }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Kontak Wali/Orang Tua</label>
+                    <input type="text" name="kontak_wali" class="form-control"
+                           value="{{ santri.kontak_wali if santri else '' }}" placeholder="Nomor WhatsApp/HP">
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-success"><i class="bi bi-save-fill"></i> Simpan</button>
+                <a href="{{ url_for('admin.santri_list') }}" class="btn btn-outline-secondary">Batal</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
