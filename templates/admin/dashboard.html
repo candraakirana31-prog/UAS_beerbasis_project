@@ -128,15 +128,22 @@
 {% endblock %}
 
 {% block extra_scripts %}
+<script id="chartBulanData" type="application/json">
+    {{ {'labels': chart_bulan_labels, 'data': chart_bulan_data} | tojson }}
+</script>
+<script id="chartKeluhanData" type="application/json">
+    {{ {'labels': chart_keluhan_labels, 'data': chart_keluhan_data} | tojson }}
+</script>
 <script>
+    const chartBulanData = JSON.parse(document.getElementById('chartBulanData').textContent);
     const ctxBulan = document.getElementById('chartBulan');
     new Chart(ctxBulan, {
         type: 'line',
         data: {
-            labels: {{ chart_bulan_labels | tojson }},
+            labels: chartBulanData.labels,
             datasets: [{
                 label: 'Jumlah Kunjungan',
-                data: {{ chart_bulan_data | tojson }},
+                data: chartBulanData.data,
                 borderColor: '#198754',
                 backgroundColor: 'rgba(25,135,84,0.15)',
                 tension: 0.3,
@@ -146,24 +153,25 @@
         options: { scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
     });
 
-    {% if chart_keluhan_labels %}
-    const ctxKeluhan = document.getElementById('chartKeluhan');
-    new Chart(ctxKeluhan, {
-        type: 'bar',
-        data: {
-            labels: {{ chart_keluhan_labels | tojson }},
-            datasets: [{
-                label: 'Jumlah Kasus',
-                data: {{ chart_keluhan_data | tojson }},
-                backgroundColor: '#20c997'
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } },
-            plugins: { legend: { display: false } }
-        }
-    });
-    {% endif %}
+    const chartKeluhanData = JSON.parse(document.getElementById('chartKeluhanData').textContent);
+    if (chartKeluhanData.labels.length > 0) {
+        const ctxKeluhan = document.getElementById('chartKeluhan');
+        new Chart(ctxKeluhan, {
+            type: 'bar',
+            data: {
+                labels: chartKeluhanData.labels,
+                datasets: [{
+                    label: 'Jumlah Kasus',
+                    data: chartKeluhanData.data,
+                    backgroundColor: '#20c997'
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
 </script>
 {% endblock %}
